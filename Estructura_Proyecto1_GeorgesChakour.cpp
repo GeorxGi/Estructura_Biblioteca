@@ -1,141 +1,69 @@
 #include <conio.h>
 #include <iostream>
-#include <Windows.h>
 #include <vector>
-#include <algorithm>
 #include <string>
-#include <fstream>
 
 #include "Libro.h"
 #include "Tesis.h"
-
-constexpr unsigned short ARREMAX = 5;
-constexpr auto ENDLINE = '\r';
-constexpr auto fileName = "DataFile.txt";
-//Segun documentacion, constexpr es una variable que se calcula en tiempo de compilacion y no ejecucion
-//dando como resultado un mejor rendimiento, seguramente no afecte mucho, pero bueno, ahi esta
+#include "Estudiante.h"
+#include "Funciones.h"
 
 using namespace std;
-//Se utilizara la convension de cpp (basado en: https://www.geeksforgeeks.org/naming-convention-in-c/)
-//m_ = prefijo para variables privadas
-//p_ = prefijo para variables protegidas
+//Se utilizara la convension de cpp. Basado en: https://www.geeksforgeeks.org/naming-convention-in-c/
+//m_ = prefijo para variables privadas  |  p_ = prefijo para variables protegidas
 
-vector<Tesis> tesis;
+vector <Tesis> tesis;
 vector <Libro> libros;
-
-#pragma region ManejadoresConsola
-//Retorna una estructura COORD en donde se almacena la coordenada XY actual del cursor de la consola
-static COORD ObtenerPosicionCursor() {
-	CONSOLE_SCREEN_BUFFER_INFO cbsi;
-	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cbsi)) {
-		return cbsi.dwCursorPosition;
-	}
-	else{
-		return COORD{0, 0};
-	}
-}
-//Ir a la posicion XY de la consola
-static void Gotoxy(short x, short y) {
-	HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD dwPos = { x, y };
-	SetConsoleCursorPosition(hcon, dwPos);
-}
-
-//Limpia la linea e imprime una cadena en la posicion XY de la consola
-static void printf_xy(string cad, int x, int y) {
-	Gotoxy(x, y); printf("\x1b[2K");
-	Gotoxy(x, y); cout << cad;
-}
-
-
-//Ir a la posicion XY de la consola en relacion a la posicion actual
-static void GotoxyRelative(short x, short y) {
-	COORD extra = ObtenerPosicionCursor();
-	Gotoxy(x + extra.X, y + extra.Y);
-}
-
-#pragma endregion
-
-#pragma region Operadores
-
-static void CargarDatosGenericos() {
-	system("cls");
-	if (tesis.size() == 0 && libros.size() == 0) {
-		//Carga de libros genericos
-		string autor[ARREMAX] = { "Marta Rodriguez", "Luis Fernandez", "Elena Garcia", "Ricardo Perez", "Julia Torres"};
-		Libro lib = Libro("La aventura del saber", autor, "Ediciones Sabiduria", "978-123-456-7890", 2015);
-		libros.push_back(lib);
-
-		autor[0] = "Andres Silva"; autor[1] = "Carolina Herrera"; autor[2] = ""; autor[3] = ""; autor[4] = "";
-		lib.ModificarDatos("Cocinando con amor", autor, "Cocina para Todos", "978-0-987-65432-1", 2018);
-		libros.push_back(lib);
-
-		autor[0] = "Andrea Ramirez"; autor[1] = "Gabriel Ortiz"; autor[2] = "Valeria mena"; autor[3] = ""; autor[4] = "";
-		lib.ModificarDatos("Historias del mas alla", autor, "Editorial Misterio", "978-1-098-76543-2", 2021);
-		libros.push_back(lib);
-
-		//Carga de tesis genericas
-		autor[0] = "Lorena Sanchez"; autor[1] = "Gustavo Diaz"; autor[2] = "Natalia Reyez"; autor[3] = "Enrique Gomez"; autor[4] = "Sofia Blanco";
-		Tesis tes = Tesis("Desarrollo Sostenible en Zonas Rurales", autor, "Dr. Fernando Castillo", "Ingenieria Ambiental", 2022);
-		tesis.push_back(tes);
-
-		autor[0] = "Maria Lopez"; autor[1] = "Jose Fernandez"; autor[2] = "Clara Gomez"; autor[3] = ""; autor[4] = "";
-		tes.ModificarDatos("Implementacion de IA en Medicina", autor, "Dra. Laura Vega", "Ingenieria Biomedica", 2023);
-		tesis.push_back(tes);
-
-
-		autor[0] = "Diego Perez"; autor[1] = "Lucia Gonzales"; autor[2] = "Miguel Castro"; autor[3] = "Sandra Torres"; autor[4] = "";
-		tes.ModificarDatos("Analisis de Energias Renovables", autor, "Dr. Luis Hernandez", "Ingenieria Electrica", 2021);
-		tesis.push_back(tes);
-	}
-	else {
-		printf("Ya existen datos cargados en memoria. Solo se pueden generar genericamente si no hay datos cargados");
-	}
-}
-
-static void MostrarVector(vector<Libro> libro) {
-	Libro lib = Libro(true);
-	for (unsigned short i = 0; i < libro.size(); i++) {
-		lib = libro.at(i);
-		cout << "TITULO:\n" << lib.ObtenerTitulo() << endl << "AUTORES:" << endl;
-		for (unsigned short j = 0; j < ARREMAX; j++) {
-			if(lib.ObtenerAutores(j).size() != 0) cout << lib.ObtenerAutores(j) << endl;
-		}
-		cout << "EDITORIAL:\n" << lib.ObtenerEditorial() << endl << "ANO DE PUBLICACION:\n" << lib.ObtenerYear() << endl;
-		cout << endl;
-	}
-}
-
-static void MostrarVector(vector<Tesis> tesis) {
-	Tesis tes = Tesis(true);
-	for (unsigned short i = 0; i < tesis.size(); i++) {
-		tes = tesis.at(i);
-		cout << "TITULO:\n" << tes.ObtenerTitulo() << endl << "AUTORES:\n" << endl;
-		for (unsigned short j = 0; j < ARREMAX; j++) {
-			if(tes.ObtenerAutores(j).size() != 0) cout << tes.ObtenerAutores(j) << endl;
-		}
-		cout << "ASESOR:\n" << tes.ObtenerAsesor() << endl << "ANO DE PUBLICACION:\n" << tes.ObtenerYear() << endl;
-		cout << endl;
-	}
-}
-#pragma endregion
+vector<Estudiante> estudiant;
 
 #pragma region OpcionesMenu
-
-//Registra una tesis y la almacena en el vector global
-static void RegistrarTesis(){
-	system("cls");
-	Tesis tes = Tesis(false);
-	tesis.push_back(tes);
+static void RegistrarLibroTesis() {
+	ColorMsg("REGISTRAR\n\n", LightAqua);
+	Libro lib = Libro(true);
+	Tesis tes = Tesis(true);
+	char opt;
+	do {
+		system("cls");
+		ColorMsg("Desea registrar un libro o una tesis?\n", LightYellow);
+		cout << "(Libro = 1 | Tesis = 2 | Salir = 0)\nOpcion = ";
+		opt = _getch(); cout << opt << endl;
+		switch (opt) {
+		case '1':
+			lib = Libro(false);
+			libros.push_back(lib);
+			opt = '0';
+			break;
+		case '2':
+			tes = Tesis(false);
+			tesis.push_back(tes);
+			opt = '0';
+			break;
+		}
+	} while (opt != '0' && opt != 27);
+	system("pause");
 }
-//Registra un libro y lo almacena en el vector global
-static void RegistrarLibro() {
-	system("cls");
-	Libro lib = Libro(false);
-	libros.push_back(lib);
+
+static void ListaLibroTesis(){
+	char opt;
+	do {
+		system("cls");
+		ColorMsg("Desea mostrar una lista de libros o tesis?\n", LightYellow);
+		cout << "(Libro = 1 | Tesis = 2 | Salir = 0)\nOpcion = ";
+		opt = _getch();
+		switch (opt) {
+		case '1':
+			MostrarVector(libros);
+			opt = '0';
+			break;
+		case '2':
+			MostrarVector(tesis);
+			opt = '0';
+			break;
+		}
+	} while (opt != '0' && opt != 27);
+	system("pause");
 }
 
-//Busca un libro o tesis a partir del vector global
 static void BuscarLibroTesisPorAutor() {
 	string aut;
 	char opt;
@@ -143,9 +71,11 @@ static void BuscarLibroTesisPorAutor() {
 	Libro auxLib = Libro(true);
 	Tesis auxTes = Tesis(true);
 
-	system("cls");
-	cout << "Desea buscar un libro o una tesis?\n(Libro = 1 | Tesis = 2 | Salir = 0)\nOpcion = ";
+	ColorMsg("BUSCAR EN REGISTROS\n\n", LightAqua);
 	do {
+		system("cls");
+		ColorMsg("Desea buscar un libro o una tesis?\n", LightYellow);
+		cout << "(Libro = 1 | Tesis = 2 | Salir = 0)\nOpcion = ";
 		opt = _getch(); cout << opt << endl;
 		switch (opt) {
 		case '1':
@@ -164,47 +94,197 @@ static void BuscarLibroTesisPorAutor() {
 			opt = '0';
 			break;
 		}
-	} while (opt != '0');
+	} while (opt != '0' && opt != 27);
 	cout << endl; system("pause");
 }
+
+static void ModificarLibroTesis() {
+	Libro lib = Libro(true);
+	Tesis tes = Tesis(true);
+	int index = 0;
+	char opt;
+	ColorMsg("MODIFICAR\n\n", LightAqua);
+	do {
+		system("cls");
+		ColorMsg("Desea modificar un libro o una tesis?\n", LightYellow);
+		cout << "(Libro = 1 | Tesis = 2 | Salir = 0)\nOpcion = ";
+		opt = _getch(); cout << opt << endl;
+		ColorMsg("Utilice las flechas del teclado para seleccionar ", LightPurple);
+		ColorMsg("(Presione ESC para volver al menu)\n", LightAqua);
+		switch (opt) {
+		case '1':
+			index = Seleccion(libros, tesis, true);
+			if (index != -1) {
+				lib = libros.at(index);
+				libros.erase(libros.begin() + index);
+				lib.ModificarDatos(true);
+				libros.insert(libros.begin() + index, lib);
+			}
+			opt = '0';
+			break;
+		case '2':
+			index = Seleccion(libros, tesis, false);
+			if (index != -1) {
+				tes = tesis.at(index);
+				tesis.erase(tesis.begin() + index);
+				tes.ModificarDatos(true);
+				tesis.insert(tesis.begin() + index, tes);
+			}
+			opt = '0';
+			break;
+		}
+	} while (opt != '0');
+	cout << endl;  system("pause");
+}
+
+static void DesincorporarLibro() {
+	Libro lib = Libro(true);
+	char opt;
+	int index, ejempIndex;
+	system("cls");
+	ColorMsg("DESINCORPORAR\n\n", LightAqua);
+	ColorMsg("Seleccione el libro que desea manejar:\n", LightYellow);
+	index = Seleccion(libros, tesis, true);
+	if (index != -1) {
+		do {
+			lib = libros.at(index);
+			cout << "(Libro = 1 | Ejemplar = 2 | Salir = 0)\nOpcion = ";
+			opt = _getch(); cout << opt << endl;
+			switch (opt) {
+			case '1':
+				ColorMsg("Esta seguro de eliminar el libro: " + lib.ObtenerTitulo() + "\nEsta accion no se puede revertir\n", Red);
+				if (SeleccionTrueFalse()) {
+					libros.erase(libros.begin() + index);
+					ColorMsg("Libro eliminado correctamente", LightRed);
+				}
+				else ColorMsg("Libro no eliminado", LightGreen);
+				opt = '0';
+				break;
+			case '2':
+				ColorMsg("Utilice las flechas del teclado para seleccionar el ISBN del ejemplar\n", LightPurple);
+				ejempIndex = SeleccionISBN(lib);
+				if(ejempIndex != -1){
+					ColorMsg("Esta seguro de eliminar este ejemplar?\nEsta accion no se puede revertir\n", Red);
+					if (SeleccionTrueFalse()) {
+						libros.erase(libros.begin() + index);
+						lib.EliminarEjemplar(ejempIndex);
+						libros.insert(libros.begin() + index, lib);
+						ColorMsg("Ejemplar eliminado correctamente", LightRed);
+					}
+					else ColorMsg("Ejemplar no eliminado", LightGreen);
+				}
+				
+				opt = '0';
+				break;
+				}
+			} while (opt != '0' && opt != 27);
+		} 
+	cout << endl;  system("pause");
+}
+
+static void ProcesarPrestamo() {
+	system("cls");
+	ColorMsg("PROCESAR PRESTAMO\n\n", LightAqua);
+	Estudiante est = Estudiante(false);
+	if (!ValidarEstudianteRepetido(est, estudiant)) {
+		ColorMsg("Datos de estudiante cargados correctamente\n", LightGreen);
+		if (est.RealizarPrestamo(libros, estudiant)) {
+			estudiant.push_back(est);
+		}
+	}
+	else {
+		ColorMsg("Estudiante ya registrado, debera devolver los libros si desea pedir nuevamente un prestamo\n", LightRed);
+	}
+	system("pause");
+}
+
+static void ProcesarReintegro() {
+	int index;
+	bool select;
+	system("cls");
+	ColorMsg("PROCESAR PRESTAMO\n\n", LightAqua);
+	ColorMsg("(Utilice las flechas del teclado para seleccionar\n", LightPurple);
+	index = SeleccionarEstudiante(estudiant);
+	if (index != -1) {
+		ColorMsg("Se reintegraran los libros prestados, eliminando la informacion del estudiante\n", LightYellow);
+		ColorMsg("Esta accion no se puede revertir, esta seguro de ello?\n", Red);
+		if (SeleccionTrueFalse()) {
+			estudiant.erase(estudiant.begin() + index);
+			ColorMsg("\nReintegro realizado correctamente", Green);
+		}
+		else {
+			ColorMsg("\nOperacion cancelada", LightYellow);
+		}
+	}
+	cout << endl;
+	system("pause");
+}
+
+static void ListarPrestamos() {
+	system("cls");
+	ColorMsg("LISTA DE PRESTAMOS", LightAqua);
+	MostrarPrestamos(estudiant, libros);
+	system("pause");
+}
+
+static void DatosGenericos() {
+	system("cls");
+	libros = CargarLibrosGenericos(libros);
+	tesis = CargarTesisGenerica(tesis);
+	system("pause");
+}
 #pragma endregion
-
-
-#pragma region MainMenu
 
 static void Menu() {
 	char opt;
 	do {
 		system("cls");
-		cout << "Bienvenido a la biblioteca de Georges chakour, que desea realizar?:\n\n1.Registrar un Libro\n2.Registrar una Tesis\n3.Buscar Libro/Tesis\n9.Cargar libros y tesis genericas (DEBUG)\n0.Salir\n\n";
-		cout << "Libros registrados = " << libros.size() << endl << "Tesis registradas = " << tesis.size() << "\n\nOpcion = ";
+		ColorMsg("Bienvenido a la biblioteca de Georges chakour, que desea realizar?\n", LightYellow);
+		cout <<"\n1.Ingresar         [Libro | Tesis]"       <<
+			   "\n2.Lista            [Libro | Tesis]"       <<
+			   "\n3.Buscar por autor [Libro | Tesis]"       <<
+			   "\n4.Modificar        [Libro | Tesis]"       <<
+			   "\n5.Desincorporar un [Libro | Ejemplar]"    <<
+			   "\n6.Procesar prestamo"                      <<
+	           "\n7.Procesar un reintegro"                  <<
+			   "\n8.Lista de prestamos"                     <<
+			   "\n9.Cargar libros y tesis genericas(DEBUG)" <<
+			   "\n0.Salir\n\n";
+		
+		ColorMsg("Libros Registrados = " + to_string(libros.size()) + "\nTesis registradas = " + to_string(tesis.size()) + "\nPrestamos realizados = " + to_string(estudiant.size()) + "\n\n", LightAqua);
+		cout << "Opcion = ";
 		opt = _getch();
+		
 		switch (opt) {
 		case '1':
-			RegistrarLibro();
+			RegistrarLibroTesis();
 			break;
 		case '2':
-			RegistrarTesis();
+			ListaLibroTesis();
 			break;
 		case '3':
 			BuscarLibroTesisPorAutor();
 			break;
-		case '9':
-			CargarDatosGenericos();
+		case '4':
+			ModificarLibroTesis();
 			break;
-		default:
-
+		case '5':
+			DesincorporarLibro();
+			break;
+		case '6':
+			ProcesarPrestamo();
+			break;
+		case '7':
+			ProcesarReintegro();
+			break;
+		case '8':
+			ListarPrestamos();
+			break;
+		case '9':
+			DatosGenericos();
 			break;
 		}
-	} while (opt != '0');
-	cout << endl; system("pause");
+	} while (opt != '0' && opt != 27);
+	cout << endl;
 }
-#pragma endregion
-
-
-
-
-
-int main() {
-	Menu();
-}
+int main() { Menu();}

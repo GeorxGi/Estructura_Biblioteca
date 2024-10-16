@@ -128,11 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Estructura_Proyecto1_GeorgesChakour.cpp" />
+    <ClCompile Include="Estudiante.cpp" />
+    <ClCompile Include="Funciones.cpp" />
     <ClCompile Include="Libro.cpp" />
     <ClCompile Include="Tesis.cpp" />
     <ClCompile Include="Texto.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Estudiante.h" />
+    <ClInclude Include="Funciones.h" />
     <ClInclude Include="Libro.h" />
     <ClInclude Include="Tesis.h" />
     <ClInclude Include="Texto.h" />
