@@ -32,6 +32,10 @@ public:
 	unsigned short ObtenerIndiceISBN(unsigned short index) const;
 };
 
+//Estos métodos se planeaba ingresarlos como métodos de la clase estudiantes
+//Pero por motivos que desconozco, el compilador moría completamente, obligandome
+//A realizarlos como métodos externos a la clase
+
 //Recibe la lista de estudiantes cargados, y retorna si la cedula ingresada este repetida
 bool ValidarEstudianteRepetido(Estudiante stud, vector<Estudiante> std);
 

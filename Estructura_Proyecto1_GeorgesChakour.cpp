@@ -80,7 +80,7 @@ static void BuscarLibroTesisPorAutor() {
 		switch (opt) {
 		case '1':
 			cout << "Ingrese el autor del libro que desea buscar: ";
-			cin >> aut;
+			getline(cin, aut);
 			lib = auxLib.FiltrarPorAutor(aut, libros);
 			MostrarVector(lib);
 			opt = '0';
@@ -88,7 +88,7 @@ static void BuscarLibroTesisPorAutor() {
 
 		case '2':
 			cout << "Ingrese el autor de la tesis que desea buscar: ";
-			cin >> aut;
+			getline(cin, aut);
 			tes = auxTes.FiltrarPorAutor(aut, tesis);
 			MostrarVector(tes);
 			opt = '0';
@@ -152,7 +152,8 @@ static void DesincorporarLibro() {
 			opt = _getch(); cout << opt << endl;
 			switch (opt) {
 			case '1':
-				ColorMsg("Esta seguro de eliminar el libro: " + lib.ObtenerTitulo() + "\nEsta accion no se puede revertir\n", Red);
+				ColorMsg("Esta seguro de eliminar el libro: " + lib.ObtenerTitulo(), LightRed);
+				ColorMsg("\nEsta accion no se puede revertir\n", Red);
 				if (SeleccionTrueFalse()) {
 					libros.erase(libros.begin() + index);
 					ColorMsg("Libro eliminado correctamente", LightRed);
@@ -161,7 +162,8 @@ static void DesincorporarLibro() {
 				opt = '0';
 				break;
 			case '2':
-				ColorMsg("Utilice las flechas del teclado para seleccionar el ISBN del ejemplar\n", LightPurple);
+				ColorMsg("Utilice las flechas del teclado para seleccionar el ISBN del ejemplar ", LightPurple);
+				ColorMsg("(Presione ESC para volver al menu)\n", LightAqua);
 				ejempIndex = SeleccionISBN(lib);
 				if(ejempIndex != -1){
 					ColorMsg("Esta seguro de eliminar este ejemplar?\nEsta accion no se puede revertir\n", Red);
@@ -203,7 +205,8 @@ static void ProcesarReintegro() {
 	bool select;
 	system("cls");
 	ColorMsg("PROCESAR PRESTAMO\n\n", LightAqua);
-	ColorMsg("(Utilice las flechas del teclado para seleccionar\n", LightPurple);
+	ColorMsg("(Utilice las flechas del teclado para seleccionar ", LightPurple);
+	ColorMsg("(Presione ESC para volver al menu)\n", LightAqua);
 	index = SeleccionarEstudiante(estudiant);
 	if (index != -1) {
 		ColorMsg("Se reintegraran los libros prestados, eliminando la informacion del estudiante\n", LightYellow);
@@ -224,6 +227,19 @@ static void ListarPrestamos() {
 	system("cls");
 	ColorMsg("LISTA DE PRESTAMOS", LightAqua);
 	MostrarPrestamos(estudiant, libros);
+	system("pause");
+}
+
+static void ListarTesisPorAsesor() {
+	vector<Tesis> tes;
+	Tesis auxTes = Tesis(true);
+	string asesor;
+	system("cls");
+	ColorMsg("LISTA DE TESIS POR ASESOR\n\n", LightAqua);
+	cout << "Ingrese el nombre del asesor que desea buscar: ";
+	getline(cin, asesor);
+	tes = auxTes.FiltrarPorAsesor(asesor, tesis);
+	MostrarVector(tes);
 	system("pause");
 }
 
@@ -248,7 +264,8 @@ static void Menu() {
 			   "\n6.Procesar prestamo"                      <<
 	           "\n7.Procesar un reintegro"                  <<
 			   "\n8.Lista de prestamos"                     <<
-			   "\n9.Cargar libros y tesis genericas(DEBUG)" <<
+			   "\n9.Lista de tesis por asesor"              <<
+			   "\nd.Cargar libros y tesis genericas(DEBUG)" <<
 			   "\n0.Salir\n\n";
 		
 		ColorMsg("Libros Registrados = " + to_string(libros.size()) + "\nTesis registradas = " + to_string(tesis.size()) + "\nPrestamos realizados = " + to_string(estudiant.size()) + "\n\n", LightAqua);
@@ -281,6 +298,9 @@ static void Menu() {
 			ListarPrestamos();
 			break;
 		case '9':
+			ListarTesisPorAsesor();
+			break;
+		case 'd':
 			DatosGenericos();
 			break;
 		}

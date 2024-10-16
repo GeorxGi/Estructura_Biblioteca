@@ -128,3 +128,23 @@ vector<Tesis> Tesis::FiltrarPorAutor(string autor, vector<Tesis> tesis) {
 	return retorno;
 }
 #pragma endregion
+
+vector<Tesis> Tesis::FiltrarPorAsesor(string asesor, vector<Tesis> tesis) {
+	vector<Tesis> retorno;
+	Tesis auxTes = Tesis(true);
+	string auxAsesor;
+	bool esValido;
+	for (unsigned short i = 0; i < tesis.size(); i++) {
+		auxTes = tesis.at(i);
+		esValido = true;
+		auxAsesor = auxTes.ObtenerAsesor();
+		for (unsigned short j = 0; j < asesor.size(); j++) {
+			if (asesor[j] != auxAsesor[j]) {
+				esValido = false;
+				break;
+			}
+		}
+		if (esValido) retorno.push_back(auxTes);
+	}
+	return retorno;
+}

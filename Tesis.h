@@ -15,10 +15,14 @@ public:
 	//Retorna la carrera a la que pertenece la tesis
 	string ObtenerCarrera() const;
 	//Recibe el nombre del autor y un vector con todas las Tesis almacenadas y retorna un vector con
-	//todas las tesis que cumplen con las mismas letras indicadas del autor
+	//todas las tesis que cumplen con interseccion en el nombre del autor
 	vector<Tesis> FiltrarPorAutor(string autor, vector<Tesis> tesis);
+	//Recibe el nombre del asesor y un vector con todas las Tesis almacenadas y retorna un vector con
+	//todas las tesis que cumplen con interseccion en el nombre del asesor
+	vector<Tesis> FiltrarPorAsesor(string asesor, vector<Tesis> tesiss);
 
 	void ModificarDatos(string titulo, string autor[ARRMAX], string asesor, string carrera, unsigned short year, unsigned short numEjemp);
 	void ModificarDatos(bool mostrarDatosAnteriores);
+	
 };
 

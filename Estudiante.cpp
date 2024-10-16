@@ -30,7 +30,7 @@ bool Estudiante::RealizarPrestamo(vector<Libro> libros, vector<Estudiante> estud
 	vector<Tesis> tes;
 
 	do {
-		cout << "Cuantos libros desea prestar?";
+		cout << "Cuantos libros desea llevar como prestamo? (1 - 3)";
 		numPrest = RetornarNumero();
 	} while (numPrest < 1 || numPrest > 3);
 
